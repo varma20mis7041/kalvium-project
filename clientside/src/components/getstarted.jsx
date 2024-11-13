@@ -19,10 +19,10 @@ const GetStarted = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Register Admin
+   
     const registerAdmin = async () => {
         try {
-            const response = axios.post('http://localhost:9000/api/admin/register', 
+            const response =await axios.post('http://localhost:9000/api/admin/register', 
                 { userName:userId, name },
                 {
                     headers: {
@@ -31,6 +31,9 @@ const GetStarted = () => {
                 }
             );
             console.log(response.data);
+            const userDetails = response.data.admin;
+            console.log(userDetails)
+            localStorage.setItem("userDetails", JSON.stringify(userDetails));
             const role = "admin"
             localStorage.setItem("role",role)
             navigate("/"); // Redirect on success
@@ -39,7 +42,6 @@ const GetStarted = () => {
         }
     };
 
-    // Login Admin
     const loginAdmin = async () => {
         try {
             const response = await axios.post('http://localhost:9000/api/admin/login', { userName:userId },
@@ -54,13 +56,13 @@ const GetStarted = () => {
             localStorage.setItem("userDetails", JSON.stringify(userDetails));
             const role = "admin"
             localStorage.setItem("role",role)
-            navigate("/"); // Redirect on success
+            navigate("/"); 
         } catch (err) {
             setError(err.response ? err.response.data.message : 'Login failed');
         }
     };
 
-    // Register User
+   
     const registerUser = async () => {
         try {
             const response = await axios.post('http://localhost:9000/api/user/register', { userId, name },
@@ -69,7 +71,10 @@ const GetStarted = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-            console.log(response.data);
+            console.log(response.user);
+            const userDetails = response.data.user;
+            console.log(userDetails)
+            localStorage.setItem("userDetails", JSON.stringify(userDetails));
             localStorage.setItem("role", "user");
             const role = "user"
             localStorage.setItem("role",role)
@@ -79,7 +84,7 @@ const GetStarted = () => {
         }
     };
 
-    // Login User
+
     const loginUser = async () => {
         try {
             const response = await axios.post('http://localhost:9000/api/user/login', { userId },
@@ -89,9 +94,12 @@ const GetStarted = () => {
                     }
                 });
             console.log(response.data);
+            const userDetails = response.data.user;
+            console.log(userDetails)
+            localStorage.setItem("userDetails", JSON.stringify(userDetails));
             const role = "user"
             localStorage.setItem("role",role)
-            navigate("/"); // Redirect on success
+            navigate("/"); 
         } catch (err) {
             setError(err.response ? err.response.data.message : 'Login failed');
         }
@@ -120,9 +128,9 @@ const GetStarted = () => {
             {currentFlow === flow.admin_register_form && (
                 <div className="h-[35vh] w-[20vw] bg-black rounded-md flex flex-col justify-center items-center">
                     <h1 className="text-white text-3xl mb-3">Register as Admin</h1>
-                    <input placeholder="Enter user ID" className="h-[35px] mb-3" onChange={(e) => setUserId(e.target.value)} />
-                    <input placeholder="Enter your name" className="h-[35px] mb-3" onChange={(e) => setName(e.target.value)} />
-                    <button className="bg-white px-3" onClick={registerAdmin}>Register</button>
+                    <input placeholder="Enter user ID" className="h-[35px] mb-3 rounded" onChange={(e) => setUserId(e.target.value)} />
+                    <input placeholder="Enter your name" className="h-[35px] mb-3 rounded" onChange={(e) => setName(e.target.value)} />
+                    <button className="px-3 rounded bg-black text-white border border-white" onClick={registerAdmin}>Register</button>
                     {error && <div className="text-red-500">{error}</div>}
                 </div>
             )}
@@ -140,9 +148,9 @@ const GetStarted = () => {
             {currentFlow === flow.user_register_form && (
                 <div className="h-[35vh] w-[20vw] bg-black rounded-md flex flex-col justify-center items-center">
                     <h1 className="text-white text-3xl">Register as User</h1>
-                    <input placeholder="Enter user ID" className="h-[35px] mb-3" onChange={(e) => setUserId(e.target.value)} />
-                    <input placeholder="Enter your name" className="h-[35px] mb-3" onChange={(e) => setName(e.target.value)} />
-                    <button className="bg-white px-3" onClick={registerUser}>Register</button>
+                    <input placeholder="Enter user ID" className="h-[35px] mb-3 rounded" onChange={(e) => setUserId(e.target.value)} />
+                    <input placeholder="Enter your name" className="h-[35px] mb-3 rounded" onChange={(e) => setName(e.target.value)} />
+                    <button className= "px-3 rounded bg-black text-white border border-white" onClick={registerUser}>Register</button>
                     {error && <div className="text-red-500">{error}</div>}
                 </div>
             )}

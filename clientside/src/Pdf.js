@@ -10,6 +10,7 @@ const socket = io.connect("http://localhost:9000")
 
 
 function PdfComp(props) {
+  const {onChangeGetIndex} = props;
   const [numPages, setNumPages] = useState();
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -43,6 +44,14 @@ useEffect(()=>{
   })
 },[socket])
 
+useEffect(()=>{
+  // if(pageNumber>numPages || pageNumber<numPages){
+  //   onChangeGetIndex(1);
+  // }else{
+    onChangeGetIndex(pageNumber)
+  // }
+
+},[pageNumber])
 
   return (
     <div className='w-[30vw] h-[80vh] mt-2 flex flex-col items-center'>

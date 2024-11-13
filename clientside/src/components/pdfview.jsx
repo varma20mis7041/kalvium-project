@@ -7,9 +7,15 @@ import { FaFilePdf } from "react-icons/fa6";
 import io from 'socket.io-client';
 import GetStarted from "./getstarted";
 import { useNavigate } from "react-router-dom";
+import { GrFormPrevious } from "react-icons/gr";
 import { FaUser } from "react-icons/fa";
 
 const socket = io.connect("http://localhost:9000");
+
+const flow = {
+  admins : "Admin View",
+  adminFiles : "Admin Files View"
+}
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -20,12 +26,15 @@ const PdfView = ()=> {
   const [avlFiles, setavlFiles] = useState([]);
   const [pdfFile, setPdfFile] = useState(null);
   const [adminFiles,setAdminFiles] = useState([]);
+  const [selectedAdmin,updateSelectedAdmin] = useState(null)
+
+  const [currentTabView,updateCurrentTabView] = useState(flow.admins)
 
   const role = localStorage.getItem("role");
   const navigate = useNavigate();
 
   const userDetails = JSON.parse(localStorage.getItem("userDetails"));
-  console.log("user details in pdf",userDetails)
+ console.log("user details in pdf",userDetails)
 
   useEffect(() => {
     if (role === undefined) {
@@ -72,29 +81,52 @@ const PdfView = ()=> {
   };
   
   
-  const [currentAdminList,updateCurrentAdminList] = useState([]);
+  
+  
+const [currentAdminFiles,updateCurrentAdminFiles]  = useState([]);
+const [currentPresentersList, updateCurrentPresentersList] = useState([]);
 
-  useEffect(() => {
-    socket.on("currentindex", (ind) => {
-      console.log("Received index from server:", ind);
-      updateCurrentIndex(ind.index);
-      showPdfI(ind.index);
+
+
+useEffect(() => {
+  socket.on("currentindex", (ind) => {
+    console.log("Received index from server:", ind);
+    updateCurrentIndex(ind.index);
+    showPdfI(ind.index);
+  });
+
+  socket.on("currentAdmin", (presentationDetails) => {
+    console.log("current admin", presentationDetails);
+    const { index, page, adminId } = presentationDetails;
+
+    updateCurrentPresentersList((prevAdminList) => {
+      const adminExists = prevAdminList.some((admin) => admin.adminId === adminId);
+
+      if (adminExists) {
+        return prevAdminList.map((admin) =>
+          admin.adminId === adminId ? { ...admin, index, page } : admin
+        );
+      } else {
+        return [...prevAdminList, { adminId, index, page }];
+      }
     });
-  
-    socket.on("currentAdmin", (adminId) => {
-      console.log("current admin",adminId)
-      updateCurrentAdminList([...currentAdminList,adminId])
-      console.log("current admin array",currentAdminList)
-      
-    });
-  
-    return () => {
-      socket.off("currentindex");
-      socket.off("currentAdmin");
-    };
-  }, []);
+  });
+
+  // Clean up event listeners on unmount
+  return () => {
+    socket.off("currentindex");
+    socket.off("currentAdmin");
+  };
+}, []);
+
+// useEffect to monitor updates to currentPresentersList
+
   
 
+const isActive = (id) => {
+  const adminExists = currentPresentersList.some((admin) => admin.adminId === id);
+  return adminExists;
+}
 
 
   const showPdfI = (id) => {
@@ -112,7 +144,7 @@ const PdfView = ()=> {
 
   const showPdf = (pdf, index) => {
     updateCurrentIndex(index);
-    socket.emit("index", { index });
+    // socket.emit("index", { index });
     socket.emit("page", { message: 1 });
     const presentationDetails = {index,page:1,adminId:userDetails.userName}
     socket.emit("admin",presentationDetails);
@@ -123,26 +155,74 @@ const PdfView = ()=> {
   
 console.log("crrind",currindex)
 
-const [currentAdminFiles,updateCurrentAdminFiles]  = useState([]);
-const [isDisplayAdminFiles, setIsDisplayAdminFiles] = useState(false);
+const [currentAdminSelectedPdf,updateCurrentAdminPdf] = useState()
+
+const [isAdminOffline,setAdminOnlineStatus] = useState(false)
+const [selectedAdminIndex,updateSelectedAdminIndex] = useState(null);
+
+useEffect(() => {
+  console.log("Updated current presenters list:", currentPresentersList);
+  if(currentTabView == flow.adminFiles){
+    onClickView(selectedAdminIndex)
+  }
+}, [currentPresentersList]);
+
+
 
 const onClickView = (index) => {
-  const selectedAdminFiles = adminFiles[index].pdfs;
-  updateCurrentAdminFiles(selectedAdminFiles)
-  setIsDisplayAdminFiles(true);
+  if(index != null){
+    updateSelectedAdminIndex(index);
+    const selectedAdminFiles = adminFiles[index].pdfs;
+    const adminId = adminFiles[index].userName;
+    const selectedPdf  = currentPresentersList.find((eachAdmin)=>eachAdmin.adminId === adminId)
+    if(selectedPdf === undefined){
+      setAdminOnlineStatus(false);
+    }else{
+      setAdminOnlineStatus(true)
+      updateCurrentAdminPdf(selectedPdf.index);
+      const pdfFileName = selectedAdminFiles[selectedPdf.index].fileName;
+      console.log("pdf file name",pdfFileName)
+      setPdfFile(`http://localhost:9000/files/${pdfFileName}`);
+      console.log(selectedPdf)
+      updateSelectedAdmin(adminFiles[index].userName)
+      updateCurrentAdminFiles(selectedAdminFiles)
+      updateCurrentTabView(flow.adminFiles)
+    }
+  }
+  
+  
 }
 
+const isSelected = () => {
+  currentPresentersList.map((eachAdmin)=>{
+    console.log("is selected",eachAdmin,selectedAdmin)
+    if(eachAdmin === selectedAdmin){
+      return eachAdmin.index;
+    }
+  })
+  return -1;
+}
 
+const onChangeGetIndex = (pagenumber) => {
+ if(role === "admin"){
+  console.log(pagenumber)
+  const presentationDetails = {index:currindex,page:pagenumber,adminId:userDetails.userName}
+  socket.emit("admin",presentationDetails);
+ }
+}
+
+console.log("selected user ",currentAdminFiles);
   return (
     <div className="">
       <NavBar getPdf={getPdf} />
       <div className="min-h-[130vh] flex justify-end bg-slate-300">
   <div className="w-[80vw] flex justify-center">
     {pdfFile !== null ? (
-      <PdfComp pdfFile={pdfFile} />
+      <PdfComp pdfFile={pdfFile} onChangeGetIndex={onChangeGetIndex} />
     ) : (
       <div className="flex flex-col justify-center">
-        {role === "admin" ? "Choose a file to start presentation!" : "No presentation going on!"}
+        {role === "admin" && "Choose a file to start presentation!"}
+        {role === "user" && "Select a admin who are online"}
       </div>
     )}
   </div>
@@ -187,7 +267,7 @@ const onClickView = (index) => {
         </div>
       ) : (
         <>
-          {isDisplayAdminFiles ? (
+          {currentTabView !== flow.admins ? (
   currentAdminFiles.length === 0 ? (
     <div className="h-full flex flex-col justify-center items-center">
       <h1 className="text-white">No Files Found</h1>
@@ -195,11 +275,16 @@ const onClickView = (index) => {
   ) : (
     <>
     <h1 className="text-white text-center w-full text-3xl mt-5">Admin Files</h1>
+    <button className="ml-3" onClick={()=>{updateCurrentTabView(flow.admins);setPdfFile(null)}}><GrFormPrevious className="text-white" size={30} /></button>
+    <div className="flex flex-wrap p-5 mt-10">
+
+    
     {currentAdminFiles.map((eachFile, index) => (
       <div
         key={index}
         className={`h-[100px] w-[150px] border border-black text-black mr-3 mb-3 flex flex-col justify-center items-center rounded-md 
-        ${currindex === index ? " text-white bg-gray-800 border-white" : "bg-white"}`}
+        ${currentAdminSelectedPdf === index ? " text-white bg-gray-800 border-white" : "bg-white"}`}
+      
       >
         <div>
           <FaFilePdf />
@@ -213,6 +298,7 @@ const onClickView = (index) => {
         </button> */}
       </div>
     ))}
+    </div>
     </>
   )
 ) : (
@@ -223,11 +309,14 @@ const onClickView = (index) => {
         <div
           key={index}
           className={`h-[100px] w-[150px] border border-black text-black mr-3 mb-3 flex flex-col justify-center items-center rounded-md 
-          ${currindex === index ? " text-white bg-gray-800 border-white" : "bg-white"}`}
+          ${currindex === index ? " text-white bg-gray-800 border-white" : "bg-white"} 
+          ${isSelected() === index ? " text-white bg-gray-800 border-white" : "bg-white"} 
+          `}
         >
           <div>
             <FaUser />
           </div>
+          {isActive(eachAdmin.userName) ? <p className="text-green-600">online</p> : "offline"}
           <h1>Name : {eachAdmin.name}</h1>
           <button
             className="px-5 bg-blue-500 text-white rounded"

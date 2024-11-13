@@ -56,12 +56,14 @@ const NavBar = ({ getPdf }) => {
     <>
     <div className="h-[6vh] w-full bg-teal-800 flex items-center justify-between px-10 text-white">
       <h1>Pdf co-viewer</h1>
+
+      <h1>{userDetails.name}</h1>
       <div className="flex items-center">
       {role === "admin" && (<button className="bg-blue-500 px-3 rounded h-[30px] flex items-center mr-5 " onClick={() => setAddNew(true)}>
       <span><GoPlusCircle /></span> Add Pdf
       </button>
       )}
-
+      
 <button className="bg-blue-500 px-3 rounded h-[30px] flex items-center  " onClick={start}>
     Get Started
       </button>
