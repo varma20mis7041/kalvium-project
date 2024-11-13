@@ -6,17 +6,16 @@ const router = express.Router();
 // Multer setup for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './files'); // Store files in the "files" folder
+    cb(null, './files'); 
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now();
-    cb(null, uniqueSuffix + file.originalname); // Ensure unique filenames
+    cb(null, uniqueSuffix + file.originalname); 
   },
 });
 
 const upload = multer({ storage: storage });
 
-// Admin Registration
 router.post('/register', async (req, res) => {
   const { userName, name } = req.body;
 
@@ -59,7 +58,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Get Admin Details
+
 router.get('/:userName', async (req, res) => {
   const { userName } = req.params;
 
@@ -75,12 +74,12 @@ router.get('/:userName', async (req, res) => {
   }
 });
 
-// Route to upload files and add them to the admin's pdfs array
+
 router.post('/upload-files', upload.single('file'), async (req, res) => {
-    const { userName, title } = req.body; // Get userName and title from the form
-    const fileName = req.file.filename;  // Get the uploaded file's name
+    const { userName, title } = req.body;
+    const fileName = req.file.filename;  
   
-    // Ensure all necessary fields are provided
+
     if (!userName || !title || !fileName) {
       return res.status(400).json({ message: 'userName, title, and file are required' });
     }
@@ -91,7 +90,7 @@ router.post('/upload-files', upload.single('file'), async (req, res) => {
         return res.status(404).json({ message: 'Admin not found' });
       }
   
-      // Add the new file with its title and filename to the pdfs array
+
       admin.pdfs.push({ title, fileName });
       await admin.save();
   

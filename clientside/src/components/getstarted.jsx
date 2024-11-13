@@ -36,7 +36,7 @@ const GetStarted = () => {
             localStorage.setItem("userDetails", JSON.stringify(userDetails));
             const role = "admin"
             localStorage.setItem("role",role)
-            navigate("/"); // Redirect on success
+            navigate("/"); 
         } catch (err) {
             setError(err.response ? err.response.data.message : 'Registration failed');
         }
@@ -78,7 +78,7 @@ const GetStarted = () => {
             localStorage.setItem("role", "user");
             const role = "user"
             localStorage.setItem("role",role)
-            navigate("/"); // Redirect on success
+            navigate("/"); 
         } catch (err) {
             setError(err.response ? err.response.data.message : 'Registration failed');
         }

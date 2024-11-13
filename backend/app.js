@@ -9,7 +9,6 @@ const userRoutes = require('./routes/user');
 
 
 
-// Enable CORS for all routes
 app.use(cors());
 
 // Or, enable CORS for a specific origin (e.g., frontend URL)
@@ -64,7 +63,7 @@ io.on("connection", (socket) => {
 });
 
 
-// Middleware
+
 app.use(express.json());
 
 
