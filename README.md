@@ -16,7 +16,7 @@ Please feel free to consider either version for evaluation, as both have been co
 
 1. Clone the repository and set up the project:
    - `git clone https://github.com/varma20mis7041/kalvium_project.git`
-   - `cd kalvium_project1`
+   - `cd kalvium_project`
 
 2. Backend Setup:
    - Navigate to the backend directory: `cd backend`
