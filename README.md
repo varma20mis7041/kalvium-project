@@ -15,7 +15,7 @@ Please feel free to consider either version for evaluation, as both have been co
 ### How to Run the Project
 
 1. Clone the repository and set up the project:
-   - `git clone https://github.com/varma20mis7041/kalvium_project1.git`
+   - `git clone https://github.com/varma20mis7041/kalvium_project.git`
    - `cd kalvium_project1`
 
 2. Backend Setup:
