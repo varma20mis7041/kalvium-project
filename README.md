@@ -14,18 +14,24 @@ Please feel free to consider either version for evaluation, as both have been co
 
 ### How to Run the Project
 
-1. **Clone the repository and set up the project:**
+1. Clone the repository and set up the project:
+   - `git clone https://github.com/varma20mis7041/kalvium_project1.git`
+   - `cd kalvium_project1`
 
-   ```bash
-   git clone https://github.com/varma20mis7041/kalvium_project1.git
-   cd kalvium_project1
-# Backend Setup
-cd backend
-npm install
-node app.js
+2. Backend Setup:
+   - Navigate to the backend directory: `cd backend`
+   - Install the dependencies: `npm install`
+   - Start the backend server: `node app.js`
 
-# Frontend Setup
-# Open a new terminal and navigate to the frontend directory:
-cd client
-npm install
-npm start
+3. Frontend Setup:
+   - Open a new terminal, navigate to the client directory: `cd client`
+   - Install the dependencies: `npm install`
+   - Start the frontend application: `npm start`
+
+---
+
+### Note
+
+Hi, I am currently working as a Frontend Developer at QuadB Tech. Today, **November 12**, is the scheduled launch of our project. Due to this, I was unable to take time off on the **11th and 12th** as I am responsible for the entire user-facing side of our application, including testing backend integrations and implementing two new features. I worked overnight to ensure this project was completed but could not host it, so I’ve provided a detailed video demonstration for reference.
+
+Thank you for your consideration!
