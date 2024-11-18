@@ -30,8 +30,6 @@ Please feel free to consider either version for evaluation, as both have been co
 
 ---
 
-### Note
 
-Hi, I am currently working as a Frontend Developer at QuadB Tech.  **November 12**, is the scheduled launch of our project. Due to this, I was unable to take time off on the **11th and 12th** .I worked overnight to ensure this project was completed but could not host it, so I’ve provided a detailed video demonstration for reference.
 
 Thank you for your consideration!
