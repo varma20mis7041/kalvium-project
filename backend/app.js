@@ -65,8 +65,8 @@ app.use("/files",express.static("files"))
 
 const initializeDBAndServer = async () => {
 
- const username = encodeURIComponent("bhargavcoding");
-    const password = encodeURIComponent("bv@9177221342");
+ const username = encodeURIComponent("*******");
+    const password = encodeURIComponent("********");
     const uri = `mongodb+srv://${username}:${password}@cluster0.ki5m4.mongodb.net/ecs?retryWrites=true&w=majority&tls=true&appName=Cluster0`;
   
     try {
